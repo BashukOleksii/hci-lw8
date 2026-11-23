@@ -16,12 +16,14 @@ router.use(authMiddleware);
 router.get("/", getDiscounts);
 router.get("/:id", getDiscountById);
 
-router.post("/", roleMiddleware("manager"), createDiscount);
+router.use(roleMiddleware("manager"));
 
-router.put("/:id", roleMiddleware("manager"), updateDiscount);
+router.post("/", createDiscount);
 
-router.patch("/:id", roleMiddleware("manager"), updateDiscount);
+router.put("/:id", updateDiscount);
 
-router.delete("/:id", roleMiddleware("manager"), deleteDiscount);
+router.patch("/:id", updateDiscount);
+
+router.delete("/:id", deleteDiscount);
 
 module.exports = router;

@@ -16,12 +16,11 @@ router.use(authMiddleware);
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 
-router.post("/", roleMiddleware("manager"), createProduct);
+router.use(roleMiddleware("manager"));
 
-router.put("/:id", roleMiddleware("manager"), updateProduct);
-
-router.patch("/:id", roleMiddleware("manager"), updateProduct);
-
-router.delete("/:id", roleMiddleware("manager"), deleteProduct);
+router.post("/", createProduct);
+router.put("/:id", updateProduct);
+router.patch("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
 
 module.exports = router;
