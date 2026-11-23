@@ -1,15 +1,13 @@
+const { ApiError } = require("../utils/apiUtils");
+
 function roleMiddleware(...allowedRoles) {
   return function (req, res, next) {
     if (!req.user) {
-      return res.status(401).json({
-        message: "Користувач не авторизований",
-      });
+      throw new ApiError(401, "Користувач не авторизований");
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: "Недостатньо прав для виконання операції",
-      });
+      throw new ApiError(403, "Недостатньо прав для виконання операції");
     }
 
     next();

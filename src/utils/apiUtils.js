@@ -17,16 +17,10 @@ function validateBody(body, allowedFields, requiredFields = []) {
   }
 
   const keys = Object.keys(body);
-
-  if (keys.length === 0) {
-    throw new ApiError(400, "Тіло запиту порожнє");
-  }
+  if (keys.length === 0) throw new ApiError(400, "Тіло запиту порожнє");
 
   const unknown = keys.filter((key) => !allowedFields.includes(key));
-
-  if (unknown.length > 0) {
-    throw new ApiError(400, `Невідомі поля: ${unknown.join(", ")}`);
-  }
+  if (unknown.length) throw new ApiError(400, `Невідомі поля: ${unknown.join(", ")}`);
 
   for (const field of requiredFields) {
     if (!Object.hasOwn(body, field)) {
@@ -56,9 +50,6 @@ function parsePagination(query, allowedSortFields) {
     throw new ApiError(400, "limit має бути від 1 до 100");
   }
 
-  const page = Number(pageRaw);
-  const limit = Number(limitRaw);
-
   const sortBy = query.sortBy ?? "createdAt";
   const order = query.order ?? "desc";
   const search = query.search ?? "";
@@ -75,6 +66,9 @@ function parsePagination(query, allowedSortFields) {
     throw new ApiError(400, "Некоректний пошуковий рядок");
   }
 
+  const page = Number(pageRaw);
+  const limit = Number(limitRaw);
+
   return {
     page,
     limit,
@@ -85,25 +79,19 @@ function parsePagination(query, allowedSortFields) {
   };
 }
 
-function parseBoolean(value, fieldName) {
-  if (value === undefined) {
-    return undefined;
-  }
-
+function parseBoolean(value, field) {
+  if (value === undefined) return undefined;
   if (value === "true") return true;
   if (value === "false") return false;
-
-  throw new ApiError(400, `${fieldName} має бути true або false`);
+  throw new ApiError(400, `${field} має бути true або false`);
 }
 
 function isMoney(value) {
-  return (
-    typeof value === "number" &&
+  return typeof value === "number" &&
     Number.isFinite(value) &&
     value >= 0 &&
     value <= 1_000_000_000 &&
-    Math.abs(value * 100 - Math.round(value * 100)) < 1e-7
-  );
+    Math.abs(value * 100 - Math.round(value * 100)) < 1e-7;
 }
 
 function escapeRegex(value) {

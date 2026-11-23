@@ -7,43 +7,36 @@ const SaleItemSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
-
     productName: {
       type: String,
       required: true,
     },
-
     quantity: {
       type: Number,
       required: true,
       min: 1,
       validate: {
-        validator: Number.isInteger,
+        validator: Number.isSafeInteger,
         message: "Кількість повинна бути цілим числом",
       },
     },
-
     priceType: {
       type: String,
       enum: ["retail", "wholesale"],
       required: true,
     },
-
     unitPrice: {
       type: Number,
       required: true,
       min: 0,
     },
-
     lineTotal: {
       type: Number,
       required: true,
       min: 0,
     },
   },
-  {
-    _id: false,
-  },
+  { _id: false },
 );
 
 const SaleSchema = new mongoose.Schema(
@@ -53,76 +46,66 @@ const SaleSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
     saleType: {
       type: String,
       enum: ["retail", "wholesale", "mixed"],
       required: true,
     },
-
     items: {
       type: [SaleItemSchema],
       required: true,
       validate: {
-        validator: function (items) {
-          return items.length > 0;
-        },
+        validator: (items) => Array.isArray(items) && items.length > 0,
         message: "Продаж повинен містити хоча б один товар",
       },
     },
-
     saleDate: {
       type: Date,
       default: Date.now,
     },
-
     totalQuantity: {
       type: Number,
       required: true,
       min: 1,
+      validate: {
+        validator: Number.isSafeInteger,
+        message: "Загальна кількість повинна бути цілим числом",
+      },
     },
-
     subtotal: {
       type: Number,
       required: true,
       min: 0,
     },
-
     discount: {
       discountId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Discount",
         default: null,
       },
-
       name: {
         type: String,
         default: null,
       },
-
       percentage: {
         type: Number,
         default: 0,
         min: 0,
         max: 100,
       },
-
       amount: {
         type: Number,
         default: 0,
         min: 0,
       },
     },
-
     totalAmount: {
       type: Number,
       required: true,
       min: 0,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Sale", SaleSchema);
