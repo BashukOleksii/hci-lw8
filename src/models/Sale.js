@@ -23,6 +23,12 @@ const SaleItemSchema = new mongoose.Schema(
       },
     },
 
+    priceType: {
+      type: String,
+      enum: ["retail", "wholesale"],
+      required: true,
+    },
+
     unitPrice: {
       type: Number,
       required: true,
@@ -50,7 +56,7 @@ const SaleSchema = new mongoose.Schema(
 
     saleType: {
       type: String,
-      enum: ["retail", "wholesale"],
+      enum: ["retail", "wholesale", "mixed"],
       required: true,
     },
 
